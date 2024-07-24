@@ -1,42 +1,34 @@
-// import { useState } from 'react';
+import React from 'react';
+import LoginForm from './components/LoginForm';
+import ScraperControls from './components/ScraperControls';
+import useWebSocket from './hooks/useWebsocket';
 import './App.css';
 
-function App() {
-  // const [count, setCount] = useState(0);
+const App: React.FC = () => {
+  const {
+    status,
+    authStatus,
+    isAuthorized,
+    scraping,
+    scrapingCompleted,
+    login,
+    scrape,
+  } = useWebSocket();
 
   return (
-    <>
-      <div id="outerContainer">
-        <form id="loginForm">
-          <h2>Login</h2>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="username"
-          />
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="password"
-          />
-          <button type="button" id="loginButton">
-            Login
-          </button>
-          <div id="authStatus"></div>
-        </form>
-        <div id="scraperControls">
-          <h2>Run ReScraper</h2>
-          <p>Scraping status updates:</p>
-          <div id="status">Not Scraping</div>
-          <button id="scrapeButton" disabled>
-            Scrape
-          </button>
-        </div>
-      </div>
-    </>
+    <div id="outerContainer">
+      {!isAuthorized ? (
+        <LoginForm onLogin={login} authStatus={authStatus} />
+      ) : (
+        <ScraperControls
+          status={status}
+          scraping={scraping}
+          scrapingCompleted={scrapingCompleted}
+          onScrape={scrape}
+        />
+      )}
+    </div>
   );
-}
+};
 
 export default App;
