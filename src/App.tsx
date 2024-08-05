@@ -1,18 +1,18 @@
 import React from 'react';
 import LoginForm from './components/LoginForm';
-import ScraperControls from './components/ScraperControls';
 import useWebSocket from './hooks/useWebsocket';
 import './App.css';
+import SkipperControls from './components/SkipperControls';
 
 const App: React.FC = () => {
   const {
     status,
     authStatus,
     isAuthorized,
-    scraping,
-    scrapingCompleted,
+    skipping,
+    skippingCompleted,
     login,
-    scrape,
+    skip,
   } = useWebSocket();
 
   return (
@@ -20,11 +20,11 @@ const App: React.FC = () => {
       {!isAuthorized ? (
         <LoginForm onLogin={login} authStatus={authStatus} />
       ) : (
-        <ScraperControls
+        <SkipperControls
           status={status}
-          scraping={scraping}
-          scrapingCompleted={scrapingCompleted}
-          onScrape={scrape}
+          skipping={skipping}
+          skippingCompleted={skippingCompleted}
+          onSkip={skip}
         />
       )}
     </div>

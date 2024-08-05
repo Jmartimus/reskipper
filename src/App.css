@@ -118,7 +118,7 @@ h2 {
   color: #000066;
 }
 
-#scraperControls {
+#skipperControls {
   text-align: center;
   align-items: center;
   flex-direction: column;
@@ -126,7 +126,7 @@ h2 {
   width:100%;
 }
 
-#scraperControls h2 {
+#skipperControls h2 {
   margin-bottom: 4px;
 }
 
@@ -136,6 +136,7 @@ h2 {
   flex-direction: column;
   padding-right: 36px;
   padding-left: 36px;
+  color: #000066;
 }
 
 #authStatus {
@@ -150,7 +151,7 @@ p {
   border-radius: 4px 4px 0 0;
 }
 
-button#scrapeButton {
+button#skipButton {
   margin-top: 0;
   width:100%;
 }

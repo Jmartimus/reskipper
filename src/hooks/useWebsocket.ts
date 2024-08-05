@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { AUTH_MESSAGES } from '../constants';
 
 const useWebSocket = () => {
-  const [status, setStatus] = useState('Not Scraping');
+  const [status, setStatus] = useState('Not Skipping');
   const [authStatus, setAuthStatus] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [scraping, setScraping] = useState(false);
-  const [scrapingCompleted, setScrapingCompleted] = useState(false);
+  const [skipping, setSkipping] = useState(false);
+  const [skippingCompleted, setSkippingCompleted] = useState(false);
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
@@ -37,14 +37,14 @@ const useWebSocket = () => {
 
     webSocket.onclose = () => {
       console.log('WebSocket connection closed.');
-      setScraping(false);
-      setStatus('Scraping completed!');
-      setScrapingCompleted(true);
+      setSkipping(false);
+      setStatus('skipping completed!');
+      setSkippingCompleted(true);
     };
 
     webSocket.onerror = (error) => {
       console.error('WebSocket error:', error);
-      setScraping(false);
+      setSkipping(false);
       setStatus(`Error: ${(error as ErrorEvent).message}`);
     };
 
@@ -67,26 +67,26 @@ const useWebSocket = () => {
     [ws]
   );
 
-  const scrape = useCallback(() => {
-    if (scrapingCompleted) {
+  const skip = useCallback(() => {
+    if (skippingCompleted) {
       window.location.reload();
     } else {
-      setScraping(true);
-      setStatus('Loading scraper...');
+      setSkipping(true);
+      setStatus('Loading skip-tracer...');
       if (ws) {
-        ws.send('Scraping...');
+        ws.send('skipping...');
       }
     }
-  }, [ws, scrapingCompleted]);
+  }, [ws, skippingCompleted]);
 
   return {
     status,
     authStatus,
     isAuthorized,
-    scraping,
-    scrapingCompleted,
+    skipping,
+    skippingCompleted,
     login,
-    scrape,
+    skip,
   };
 };
 

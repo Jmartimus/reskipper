@@ -12,6 +12,7 @@ dist
 secrets.ts
 dist-ssr
 *.local
+reskipper-key.json
 
 # Editor directories and files
 .vscode/*
