@@ -1,10 +1,11 @@
 export enum STATUS_MESSAGES {
   STEP_1 = '1. Authenticating google sheet.',
   STEP_2 = '2. Google sheet authenticated, fetching data from sheet.',
-  STEP_3 = '3. Data fetched, grabbing sheet ID.',
-  STEP_4 = '4. Making skiptracing calls to API.',
-  STEP_5 = '5. Returning skiptraced data to google sheet.',
-  STEP_6 = '6. Skiptracing completed',
+  STEP_3 = '3. Filtering out previously skiptraced leads.',
+  STEP_4 = '4. Data fetched, grabbing sheet ID.',
+  STEP_5 = '5. Making skiptracing calls to API.',
+  STEP_6 = '6. Returning skiptraced data to google sheet.',
+  STEP_7 = '7. Skiptracing completed',
 }
 
 export enum AUTH_MESSAGES {
@@ -27,4 +28,4 @@ export const googleSheetDataFetchRange = 'D2:D';
 export const returnPhoneNumbersColIdx = 7; // Column H (zero-based index is 7)
 
 // Column I to return relatives
-export const returnRelativesColIdx = 7; // Column I (zero-based index is 8)
+export const returnRelativesColIdx = 8; // Column I (zero-based index is 8)

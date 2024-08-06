@@ -33,8 +33,16 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     );
     await delay(delayTime); // Delay so user can see message update.
 
-    // Get google sheet ID
+    // Filter out entries with empty name or existing phone numbers so we don't waste requests
     ws.send(STATUS_MESSAGES.STEP_3);
+    const filteredData = data?.filter(
+      (entry) =>
+        entry.name !== '' &&
+        (!entry.phoneNumbers || entry.phoneNumbers.length === 0)
+    );
+
+    // Get google sheet ID
+    ws.send(STATUS_MESSAGES.STEP_4);
     const returnSheetId = await getSheetId(
       sheets,
       spreadsheetId,
@@ -42,14 +50,14 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     );
     await delay(delayTime); // Delay so user can see message update.
 
-    if (!data) {
+    if (!filteredData) {
       return;
     }
 
     // Making skiptracing calls to API
-    ws.send(STATUS_MESSAGES.STEP_4);
+    ws.send(STATUS_MESSAGES.STEP_5);
     const allResults: Array<GoogleSheetCellData> = [];
-    for (const entry of data) {
+    for (const entry of filteredData) {
       try {
         // default to louisiana unless we have incoming location data
         const location = entry.location ?? 'Louisiana';
@@ -66,7 +74,7 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     }
 
     // Returning skiptraced data to google sheet.
-    ws.send(STATUS_MESSAGES.STEP_5);
+    ws.send(STATUS_MESSAGES.STEP_6);
     const requests = createUpdateRequests(allResults, returnSheetId);
 
     // Execute batch update
@@ -90,7 +98,7 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     }
   } finally {
     // Skiptracing completed.
-    ws.send(STATUS_MESSAGES.STEP_6);
+    ws.send(STATUS_MESSAGES.STEP_7);
     await delay(delayTime); // Delay so user can see message update.
     ws.close();
   }

@@ -11,7 +11,10 @@ import { mockResData } from '../../mockData';
 export const fetchData = async (
   name: string,
   location: string
-): Promise<{ phoneNumbers: string[]; relatives: string[] } | null> => {
+): Promise<{
+  phoneNumbers: string[];
+  relatives: string[];
+} | null> => {
   console.log({ name, location });
   // comment back in when we want to use API instead of mock data.
   // try {
@@ -35,7 +38,10 @@ export const fetchData = async (
       .map((person) => person.relatives)
       .flat(); // Flatten the array of relatives
 
-    return { phoneNumbers, relatives };
+    return {
+      phoneNumbers: phoneNumbers.length ? phoneNumbers : ['No data found'],
+      relatives: relatives.length ? relatives : ['No data found'],
+    };
   } else {
     console.error('Error fetching data:', responseContent.message);
     return null;

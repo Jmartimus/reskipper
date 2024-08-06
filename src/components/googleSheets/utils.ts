@@ -38,8 +38,8 @@ export const fetchDataFromSheet = async (
 
     return rows.map((row, index) => ({
       index: index + 2, // first data row is at index 2
-      name: row[0],
-      location: row[1] || 'Louisiana', // Default to 'Louisiana' if location is not provided
+      location: row[0] || 'Louisiana', // Location from column C (zero-based index 0)
+      name: row[1], // Name from column D (zero-based index 1)
       phoneNumbers: [],
       relatives: [],
     }));

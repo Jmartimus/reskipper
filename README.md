@@ -52,3 +52,12 @@ To deploy the project using Fly.io:
 2. Follow Fly.io documentation to set up your application.
 3. Update the necessary configuration files for deployment, such as fly.toml and run `fly deploy` to redeploy app with new changes.
 **Just because you merge code, does not mean this gets redeployed**
+
+## Scripts
+`yarn dev`: Starts the Vite development server for the frontend.
+`yarn start-server`: Builds the backend server and starts it using ts-node.
+`yarn start`: Starts both the Vite development server and the backend server using a shell script.
+`yarn build`: Compiles the TypeScript files for the frontend and builds the Vite production assets.
+`yarn build-server`: Compiles the TypeScript files for the backend server.
+`yarn lint`: Runs ESLint on the project files with specific options to report unused disable directives and sets the maximum warnings to 0.
+`yarn preview`: Starts the Vite preview server to serve the built production assets.
