@@ -1,5 +1,9 @@
 // import axios from 'axios';
-import { mockResData } from '../../mockData';
+import axios from 'axios';
+// import { mockResData } from '../../mockData';
+import { ApiResponse } from '../../types';
+import { api_key, api_url } from '../../secrets';
+import { APIThrottle } from '../../constants';
 
 /**
  * Fetches phone data and relatives for a given name and location.
@@ -15,40 +19,48 @@ export const fetchData = async (
   phoneNumbers: string[];
   relatives: string[];
 } | null> => {
-  console.log({ name, location });
-  // comment back in when we want to use API instead of mock data.
-  // try {
-  //   const response = await axios.get<ApiResponse>(api_url, {
-  //     params: {
-  //       api_key,
-  //       search_by: 'name',
-  //       name,
-  //       location,
-  //     },
-  //   });
+  console.log('Skiptracing the following:', { name, location });
+  try {
+    const response = await axios.get<ApiResponse>(api_url, {
+      params: {
+        api_key,
+        search_by: 'name',
+        name,
+        location,
+      },
+    });
 
-  // const responseContent = response.data;
-  const responseContent = mockResData;
-  if (responseContent.is_success) {
-    const phoneNumbers = responseContent.data
-      .map((person) => person.phone)
-      .flat(); // Flatten the array of phone numbers
+    const responseContent = response.data;
+    // const responseContent = mockResData;
+    if (responseContent.is_success) {
+      const phoneNumbers = responseContent.data
+        .map((person) => person.phone)
+        .flat() // Flatten the array of phone numbers
+        .slice(0, APIThrottle); // Flatten the array of phone numbers and take only the first 10
 
-    const relatives = responseContent.data
-      .map((person) => person.relatives)
-      .flat(); // Flatten the array of relatives
+      const relatives = Array.from(
+        new Set(
+          responseContent.data
+            .map((person) => person.relatives)
+            .flat()
+            .join(' • ')
+            .split(' • ')
+            .slice(0, 10) // Split by ' • ', take the first 10
+            .map((relative) => relative.replace(/\./g, ',')) // Replace dots with commas
+        )
+      );
 
-    return {
-      phoneNumbers: phoneNumbers.length ? phoneNumbers : ['No data found'],
-      relatives: relatives.length ? relatives : ['No data found'],
-    };
-  } else {
-    console.error('Error fetching data:', responseContent.message);
+      return {
+        phoneNumbers: phoneNumbers.length ? phoneNumbers : ['No data found'],
+        relatives: relatives.length ? relatives : ['No data found'],
+      };
+    } else {
+      console.error('Error fetching data:', responseContent.message);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
     return null;
-    // } catch (error) {
-    //   console.error('Error fetching data:', error);
-    //   return null;
-    // }
   }
 };
 

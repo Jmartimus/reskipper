@@ -16,6 +16,9 @@ import {
   STATUS_MESSAGES,
 } from '../../constants';
 
+//todo:
+// 3. get hosted
+
 export const runReSkipper = async (ws: WebSocket): Promise<void> => {
   try {
     // Authenticating sheet
@@ -33,16 +36,8 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     );
     await delay(delayTime); // Delay so user can see message update.
 
-    // Filter out entries with empty name or existing phone numbers so we don't waste requests
-    ws.send(STATUS_MESSAGES.STEP_3);
-    const filteredData = data?.filter(
-      (entry) =>
-        entry.name !== '' &&
-        (!entry.phoneNumbers || entry.phoneNumbers.length === 0)
-    );
-
     // Get google sheet ID
-    ws.send(STATUS_MESSAGES.STEP_4);
+    ws.send(STATUS_MESSAGES.STEP_3);
     const returnSheetId = await getSheetId(
       sheets,
       spreadsheetId,
@@ -50,14 +45,14 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     );
     await delay(delayTime); // Delay so user can see message update.
 
-    if (!filteredData) {
+    if (!data) {
       return;
     }
 
     // Making skiptracing calls to API
-    ws.send(STATUS_MESSAGES.STEP_5);
+    ws.send(STATUS_MESSAGES.STEP_4);
     const allResults: Array<GoogleSheetCellData> = [];
-    for (const entry of filteredData) {
+    for (const entry of data) {
       try {
         // default to louisiana unless we have incoming location data
         const location = entry.location ?? 'Louisiana';
@@ -74,7 +69,7 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     }
 
     // Returning skiptraced data to google sheet.
-    ws.send(STATUS_MESSAGES.STEP_6);
+    ws.send(STATUS_MESSAGES.STEP_5);
     const requests = createUpdateRequests(allResults, returnSheetId);
 
     // Execute batch update
@@ -98,7 +93,7 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     }
   } finally {
     // Skiptracing completed.
-    ws.send(STATUS_MESSAGES.STEP_7);
+    ws.send(STATUS_MESSAGES.STEP_6);
     await delay(delayTime); // Delay so user can see message update.
     ws.close();
   }

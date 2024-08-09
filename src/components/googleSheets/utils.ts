@@ -36,13 +36,20 @@ export const fetchDataFromSheet = async (
       return [];
     }
 
-    return rows.map((row, index) => ({
+    const data = rows.map((row, index) => ({
       index: index + 2, // first data row is at index 2
       location: row[0] || 'Louisiana', // Location from column C (zero-based index 0)
       name: row[1], // Name from column D (zero-based index 1)
-      phoneNumbers: [],
+      phoneNumbers: row[4] ? row[4].split(', ') : [], // Phone numbers from column G (zero-based index 4)
       relatives: [],
     }));
+
+    // Filter out entries with empty name or existing phone numbers so we don't waste requests
+    const filteredData = data.filter(
+      (entry) => entry.name && entry.phoneNumbers.length === 0
+    );
+
+    return filteredData;
   } catch (error) {
     console.error('Error fetching data from Google Sheet:', error);
     throw error;
@@ -136,8 +143,8 @@ export function createUpdateRequests(
             sheetId: returnSheetId,
             startRowIndex: entry.index - 1, // Zero-based index for Google Sheets
             endRowIndex: entry.index, // Single row
-            startColumnIndex: returnRelativesColIdx, // Column I (zero-based index is 8)
-            endColumnIndex: returnRelativesColIdx + 1, // Single column (I)
+            startColumnIndex: returnRelativesColIdx, // Column P (zero-based index is 15)
+            endColumnIndex: returnRelativesColIdx + 1, // Single column (P)
           },
           rows: [
             {

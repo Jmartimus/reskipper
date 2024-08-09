@@ -1,11 +1,10 @@
 export enum STATUS_MESSAGES {
   STEP_1 = '1. Authenticating google sheet.',
-  STEP_2 = '2. Google sheet authenticated, fetching data from sheet.',
-  STEP_3 = '3. Filtering out previously skiptraced leads.',
-  STEP_4 = '4. Data fetched, grabbing sheet ID.',
-  STEP_5 = '5. Making skiptracing calls to API.',
-  STEP_6 = '6. Returning skiptraced data to google sheet.',
-  STEP_7 = '7. Skiptracing completed',
+  STEP_2 = '2. Fetching data from sheet and filtering.',
+  STEP_3 = '3. Data fetched, grabbing sheet ID.',
+  STEP_4 = '4. Making skiptracing calls to API.',
+  STEP_5 = '5. Returning skiptraced data to google sheet.',
+  STEP_6 = '6. Skiptracing completed',
 }
 
 export enum AUTH_MESSAGES {
@@ -19,13 +18,16 @@ export const delayTime = 750;
 export const APIdelayTime = 500;
 
 // Google sheet title we are using with skip tracer
-export const spreadSheetTitle = 'Fresh Leads';
+export const spreadSheetTitle = ' Test Fresh Leads';
 
-// Name column range
-export const googleSheetDataFetchRange = 'D2:D';
+// Location column through contact numbers column range
+export const googleSheetDataFetchRange = 'C2:G';
 
-// Column H to return numbers
-export const returnPhoneNumbersColIdx = 7; // Column H (zero-based index is 7)
+// Column G to return numbers
+export const returnPhoneNumbersColIdx = 6; // Column G (zero-based index is 6)
 
-// Column I to return relatives
-export const returnRelativesColIdx = 8; // Column I (zero-based index is 8)
+// Column O to return relatives
+export const returnRelativesColIdx = 14; // Column O (zero-based index is 14)
+
+// API throttle to only return the first 10 items in the list
+export const APIThrottle = 10;
