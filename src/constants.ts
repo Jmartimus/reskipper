@@ -18,7 +18,7 @@ export const delayTime = 750;
 export const APIdelayTime = 500;
 
 // Google sheet title we are using with skip tracer
-export const spreadSheetTitle = ' Test Fresh Leads';
+export const spreadSheetTitle = 'Fresh Leads';
 
 // Location column through contact numbers column range
 export const googleSheetDataFetchRange = 'C2:G';

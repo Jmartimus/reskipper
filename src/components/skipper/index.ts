@@ -18,6 +18,8 @@ import {
 
 //todo:
 // 3. get hosted
+// 4. Make sure to return something like: "No data found" when we can't find data.
+// 5. Maybe make WS messages more dynamic and include specific data?
 
 export const runReSkipper = async (ws: WebSocket): Promise<void> => {
   try {
