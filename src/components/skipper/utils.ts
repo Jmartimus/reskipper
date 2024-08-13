@@ -33,10 +33,14 @@ export const fetchData = async (
     const responseContent = response.data;
     // const responseContent = mockResData;
     if (responseContent.is_success) {
-      const phoneNumbers = responseContent.data
-        .map((person) => person.phone)
-        .flat() // Flatten the array of phone numbers
-        .slice(0, APIThrottle); // Flatten the array of phone numbers and take only the first 10
+      const phoneNumbers = Array.from(
+        new Set(
+          responseContent.data
+            .map((person) => person.phone)
+            .flat() // Flatten the array of phone numbers
+            .slice(0, APIThrottle) // Flatten the array of phone numbers and take only the first 10
+        )
+      );
 
       const relatives = Array.from(
         new Set(
@@ -51,8 +55,12 @@ export const fetchData = async (
       );
 
       return {
-        phoneNumbers: phoneNumbers.length ? phoneNumbers : ['No data found'],
-        relatives: relatives.length ? relatives : ['No data found'],
+        phoneNumbers: phoneNumbers.length
+          ? phoneNumbers
+          : phoneNumbers.concat('No data found'),
+        relatives: relatives.length
+          ? relatives
+          : relatives.concat('No data found'),
       };
     } else {
       console.error('Error fetching data:', responseContent.message);

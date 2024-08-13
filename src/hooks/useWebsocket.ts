@@ -11,8 +11,8 @@ const useWebSocket = () => {
 
   useEffect(() => {
     const WS_URL =
-      window.location.hostname === 'rescraper.fly.dev'
-        ? 'wss://rescraper.fly.dev/'
+      window.location.hostname === 'reskipper.fly.dev'
+        ? 'wss://reskipper.fly.dev/'
         : 'ws://localhost:8080';
 
     const webSocket = new WebSocket(WS_URL);
