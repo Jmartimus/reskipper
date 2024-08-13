@@ -5,12 +5,14 @@
   "type": "commonjs",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build-client": "tsc -b && vite build",
+    "build": "yarn build-server && yarn build-client",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start-server": "yarn build-server && ts-node -P tsconfig.server.json server/index.ts",
     "build-server": "tsc -p tsconfig.server.json",
-    "start": "./start.sh"
+    "start-dev": "./start.sh",
+    "start": "ts-node -P tsconfig.server.json server/index.ts"
   },
   "dependencies": {
     "axios": "^1.7.2",
@@ -24,6 +26,7 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.8",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
