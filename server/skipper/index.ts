@@ -1,12 +1,11 @@
 import { authenticateSheets } from '../googleSheets/auth';
 import type WebSocket from 'ws';
-import { GoogleSheetCellData } from '../../types';
+import { GoogleSheetCellData } from '../../src/types';
 import {
   createUpdateRequests,
   fetchDataFromSheet,
   getSheetId,
 } from '../googleSheets/utils';
-import { spreadsheetId } from '../../secrets';
 import { delay, fetchData } from './utils';
 import {
   APIdelayTime,
@@ -14,7 +13,8 @@ import {
   googleSheetDataFetchRange,
   spreadSheetTitle,
   STATUS_MESSAGES,
-} from '../../constants';
+} from '../../src/constants';
+import { spreadsheetId } from '../secrets';
 
 //todo:
 // 3. get hosted
@@ -48,6 +48,7 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     await delay(delayTime); // Delay so user can see message update.
 
     if (!data) {
+      ws.send('No data - closing down.');
       return;
     }
 

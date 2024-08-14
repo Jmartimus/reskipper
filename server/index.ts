@@ -1,7 +1,7 @@
 import express from 'express';
 import http from 'http';
 import { WebSocketServer } from 'ws';
-import { runReSkipper } from '../src/components/skipper';
+import { runReSkipper } from './skipper';
 import { type AuthorizedWebSocket, authenticateUser } from './authenticate';
 
 const app = express();

@@ -1,6 +1,6 @@
-import { allowedUsers } from '../src/secrets';
 import { AUTH_MESSAGES } from '../src/constants';
 import type WebSocket from 'ws';
+import { allowedUsers } from './secrets';
 
 export interface AuthorizedWebSocket extends WebSocket {
   isAuthorized?: boolean;

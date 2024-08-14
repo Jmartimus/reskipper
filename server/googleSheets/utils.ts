@@ -2,11 +2,11 @@ import {
   GoogleRequestSchema,
   GoogleSheetCellData,
   type Sheets,
-} from '../../types';
+} from '../../src/types';
 import {
   returnPhoneNumbersColIdx,
   returnRelativesColIdx,
-} from '../../constants';
+} from '../../src/constants';
 
 /**
  * Fetches data from a Google Spreadsheet.

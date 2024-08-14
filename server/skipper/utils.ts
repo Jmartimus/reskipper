@@ -1,9 +1,9 @@
 // import axios from 'axios';
 import axios from 'axios';
 // import { mockResData } from '../../mockData';
-import { ApiResponse } from '../../types';
-import { api_key, api_url } from '../../secrets';
-import { APIThrottle } from '../../constants';
+import { ApiResponse } from '../../src/types';
+import { APIThrottle } from '../../src/constants';
+import { api_key, api_url } from '../secrets';
 
 /**
  * Fetches phone data and relatives for a given name and location.
@@ -20,6 +20,7 @@ export const fetchData = async (
   relatives: string[];
 } | null> => {
   console.log('Skiptracing the following:', { name, location });
+
   try {
     const response = await axios.get<ApiResponse>(api_url, {
       params: {
