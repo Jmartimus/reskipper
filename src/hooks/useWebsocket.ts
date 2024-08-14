@@ -10,10 +10,7 @@ const useWebSocket = () => {
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const WS_URL =
-      window.location.hostname === 'reskipper.fly.dev'
-        ? 'wss://reskipper.fly.dev/'
-        : 'ws://localhost:8080';
+    const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080';
 
     const webSocket = new WebSocket(WS_URL);
 
