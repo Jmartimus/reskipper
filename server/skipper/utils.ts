@@ -1,25 +1,28 @@
-// import axios from 'axios';
 import axios from 'axios';
 // import { mockResData } from '../../mockData';
 import { ApiResponse } from '../../src/types';
 import { APIThrottle } from '../../src/constants';
 import { api_key, api_url } from '../secrets';
+import { WebSocket } from 'ws';
 
 /**
  * Fetches phone data and relatives for a given name and location.
  *
  * @param {string} name - The name of the person to search for.
  * @param {string} location - The location of the person to search for.
+ * @param {WebSocket} ws - The WebSocket connection to send updates to.
  * @returns {Promise<{ phoneNumbers: string[], relatives: string[] } | null>} - A promise that resolves to an object containing arrays of phone numbers and relatives, or null if there was an error.
  */
 export const fetchData = async (
   name: string,
-  location: string
+  location: string,
+  ws: WebSocket
 ): Promise<{
   phoneNumbers: string[];
   relatives: string[];
 } | null> => {
   console.log('Skiptracing the following:', { name, location });
+  ws.send(`Skiptracing ${name}`);
 
   try {
     const response = await axios.get<ApiResponse>(api_url, {
@@ -32,43 +35,59 @@ export const fetchData = async (
     });
 
     const responseContent = response.data;
-    // const responseContent = mockResData;
+
     if (responseContent.is_success) {
       const phoneNumbers = Array.from(
         new Set(
           responseContent.data
-            .map((person) => person.phone)
-            .flat() // Flatten the array of phone numbers
-            .slice(0, APIThrottle) // Flatten the array of phone numbers and take only the first 10
+            .map((person) =>
+              person.phone === undefined ? 'No data found' : person.phone
+            )
+            .flat()
         )
-      );
+      ).slice(0, APIThrottle);
 
       const relatives = Array.from(
         new Set(
           responseContent.data
-            .map((person) => person.relatives)
+            .map((person) =>
+              person.relatives === undefined
+                ? 'No data found'
+                : person.relatives
+            )
             .flat()
             .join(' • ')
             .split(' • ')
-            .slice(0, 10) // Split by ' • ', take the first 10
-            .map((relative) => relative.replace(/\./g, ',')) // Replace dots with commas
+            .map((relative) => relative.replace(/\./g, ','))
         )
-      );
+      ).slice(0, APIThrottle);
 
-      return {
-        phoneNumbers: phoneNumbers.length
-          ? phoneNumbers
-          : phoneNumbers.concat('No data found'),
-        relatives: relatives.length
-          ? relatives
-          : relatives.concat('No data found'),
-      };
+      return { phoneNumbers, relatives };
     } else {
-      console.error('Error fetching data:', responseContent.message);
+      const errorMessage = `Error fetching data: ${responseContent.message}`;
+      console.error(errorMessage);
+      ws.send(errorMessage); // Send error message via WebSocket
       return null;
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
+    const errorMessage = `Error fetching data: ${error.message || error}`;
+    console.error(errorMessage);
+
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        ws.send(
+          `Error: Server responded with status ${error.response.status} - ${error.response.statusText}`
+        );
+      } else if (error.request) {
+        ws.send('Error: No response received from server.');
+      } else {
+        ws.send('Error: Request setup failed.');
+      }
+    } else {
+      ws.send(errorMessage);
+    }
+
     return null;
   }
 };

@@ -3,6 +3,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import { runReSkipper } from './skipper';
 import { type AuthorizedWebSocket, authenticateUser } from './authenticate';
+import { configDotenv } from 'dotenv';
 
 const app = express();
 const server = http.createServer(app);
@@ -11,6 +12,8 @@ const wss = new WebSocketServer({ server });
 app.use(express.static('public'));
 
 const port = 8080;
+
+configDotenv();
 
 wss.on('connection', (ws: AuthorizedWebSocket) => {
   ws.isAuthorized = false;

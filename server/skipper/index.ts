@@ -16,17 +16,19 @@ import {
 } from '../../src/constants';
 import { spreadsheetId } from '../secrets';
 
-//todo:
-// 3. get hosted
-// 4. Make sure to return something like: "No data found" when we can't find data.
-// 5. Maybe make WS messages more dynamic and include specific data?
-
 export const runReSkipper = async (ws: WebSocket): Promise<void> => {
   try {
     // Authenticating sheet
     ws.send(STATUS_MESSAGES.STEP_1);
     const sheets = await authenticateSheets();
     await delay(delayTime); // Delay so user can see message update.
+
+    if (!sheets) {
+      ws.send(
+        'Failed google sheet authentication - closing down. Please try again later.'
+      );
+      return;
+    }
 
     // Get google sheet data
     ws.send(STATUS_MESSAGES.STEP_2);
@@ -48,7 +50,7 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
     await delay(delayTime); // Delay so user can see message update.
 
     if (!data) {
-      ws.send('No data - closing down.');
+      ws.send('No data to update - closing down. Please try again later.');
       return;
     }
 
@@ -59,11 +61,14 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
       try {
         // default to louisiana unless we have incoming location data
         const location = entry.location ?? 'Louisiana';
-        const result = await fetchData(entry.name, location);
-        if (result) {
-          const { phoneNumbers, relatives } = result;
-          allResults.push({ ...entry, phoneNumbers, relatives });
+        const result = await fetchData(entry.name, location, ws);
+        if (!result) {
+          ws.send(`Something went wrong with the API. Please try again later.`);
+          return;
         }
+
+        const { phoneNumbers, relatives } = result;
+        allResults.push({ ...entry, phoneNumbers, relatives });
         await delay(APIdelayTime); // Delay for 500ms to ensure only 2 requests per second
       } catch (apiError) {
         console.error('Error fetching phone data:', apiError);
@@ -83,6 +88,9 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
       },
     });
     await delay(delayTime); // Delay so user can see message update.
+
+    ws.send(STATUS_MESSAGES.STEP_6);
+    await delay(delayTime); // Delay so user can see message update.
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error accessing or updating Google Sheet:', error);
@@ -95,9 +103,6 @@ export const runReSkipper = async (ws: WebSocket): Promise<void> => {
       ws.send(`Unexpected error type: ${typeof error}`);
     }
   } finally {
-    // Skiptracing completed.
-    ws.send(STATUS_MESSAGES.STEP_6);
-    await delay(delayTime); // Delay so user can see message update.
     ws.close();
   }
 };

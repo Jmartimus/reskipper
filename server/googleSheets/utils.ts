@@ -49,7 +49,7 @@ export const fetchDataFromSheet = async (
       (entry) => entry.name && entry.phoneNumbers.length === 0
     );
 
-    return filteredData;
+    return filteredData.length > 0 ? filteredData : null;
   } catch (error) {
     console.error('Error fetching data from Google Sheet:', error);
     throw error;
